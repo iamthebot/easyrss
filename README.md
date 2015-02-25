@@ -2,4 +2,6 @@
 # easyrss
 Made this after finding no barebones rss packages that simply parsed an RSS feed from an existing byte slice. Easyrss doesn't require you fetch, update, parse, or format anything. Simply pass along a byte slice containing the feed and you're in business.
 
-Absolutely no date parsing, etc. happens inside. You simply get a struct containing the channels (and metadata) with channels containing all the items you want. The package is only 45LOC.
+It will also handle iTunes specific tags in case you're scraping a podcast page.
+
+Absolutely no date parsing, etc. happens inside. You simply get a struct containing the channels (and metadata) with channels containing all the items you want. The package is only 50LOC.
