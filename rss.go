@@ -56,6 +56,7 @@ type Item struct {
 	Date           string       `xml:"pubDate"`     //Last date of item publication
 	GUID           string       `xml:"guid"`
 	ItunesAuthor   string       `xml:"itunes:author"`   //Itunes Episode Author
+	ItunesDuration string       `xml:"itunes:duration"` //Itunes Episode Duration
 	ItunesImage    Image        `xml:"itunes:image"`    //Itunes Episode Th
 	ItunesSubtitle string       `xml:"itunes:subtitle"` //Itunes Episode Subtitle
 	ItunesSummary  string       `xml"itunes:summary"`   //Itunes Episode Summary
