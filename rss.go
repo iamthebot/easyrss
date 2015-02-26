@@ -45,23 +45,32 @@ type Image struct {
 	Width  string `xml:"width,attr"`
 	Height string `xml:"height,attr"`
 }
+
+type Itunes struct {
+	Author   string `xml:"author"`
+	Duration string `xml:"duration"`
+	Image    Image  `xml:"image"`
+	Subtitle string `xml:"subtitle"`
+	Summary  string `xml:"summary"`
+}
+
+type Media struct {
+	Content   RSSEnclosure `xml:"content"`
+	Thumbnail Image        `xml:"thumbnail"`
+}
+
 type Item struct {
-	XMLname        xml.Name     `xml:"item"`
-	Title          string       `xml:"title"`       //Item title
-	Link           string       `xml:"link"`        //Item link
-	Content        string       `xml:"encoded"`     //Item content
-	Description    string       `xml:"description"` //Item description
-	Category       []string     `xml:"category"`    //Item categories
-	Enclosure      RSSEnclosure `xml"enclosure"`    //Optional RSS Media Enclosure
-	Date           string       `xml:"pubDate"`     //Last date of item publication
-	GUID           string       `xml:"guid"`
-	ItunesAuthor   string       `xml:"itunes:author"`   //Itunes Episode Author
-	ItunesDuration string       `xml:"itunes:duration"` //Itunes Episode Duration
-	ItunesImage    Image        `xml:"itunes:image"`    //Itunes Episode Th
-	ItunesSubtitle string       `xml:"itunes:subtitle"` //Itunes Episode Subtitle
-	ItunesSummary  string       `xml"itunes:summary"`   //Itunes Episode Summary
-	MediaContent   RSSEnclosure `xml:"media:content"`   //Media Payload
-	MediaThumbnail Image        `xml:"media:thumbnail"` //Media Thumbnail
+	XMLname     xml.Name     `xml:"item"`
+	Title       string       `xml:"title"`       //Item title
+	Link        string       `xml:"link"`        //Item link
+	Content     string       `xml:"encoded"`     //Item content
+	Description string       `xml:"description"` //Item description
+	Category    []string     `xml:"category"`    //Item categories
+	Enclosure   RSSEnclosure `xml"enclosure"`    //Optional RSS Media Enclosure
+	Date        string       `xml:"pubDate"`     //Last date of item publication
+	GUID        string       `xml:"guid"`        //ID
+	Itunes      Itunes       //Itunes Data
+	Media       Media        //Media Payload
 }
 
 //Pass in a byte slice containing the feed, get an RSS struct back, with stuff populated.
