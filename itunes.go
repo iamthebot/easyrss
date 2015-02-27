@@ -120,6 +120,38 @@ func (r *RSS) ItunesExplicit() (string, error) {
 	return r.channel.itunes.explicit, nil
 }
 
+//Returns the Itunes "author" field for the item. If the item doesn't contain ITunes Extensions or hasn't populated the Itunes "author" field, will return an empty string and an error
+func (i *Item) ItunesAuthor() (string, error) {
+	if !i.isItunes {
+		return "", errors.New("Not an Itunes RSS Feed")
+	}
+	if i.itunes.author == "" {
+		return "", errors.New("Itunes author field not populated")
+	}
+	return i.itunes.author, nil
+}
+
+//Returns the Itunes "author" field for the item. If the item doesn't contain ITunes Extensions or hasn't populated the Itunes "subtitle" field, will return an empty string and an error
+func (i *Item) ItunesSubtitle() (string, error) {
+	if !i.isItunes {
+		return "", errors.New("Not an Itunes RSS Feed")
+	}
+	if i.itunes.subtitle == "" {
+		return "", errors.New("Itunes subtitle field not populated")
+	}
+	return i.itunes.subtitle, nil
+}
+
+//Returns the Itunes "summary" field for the item. If the item doesn't contain ITunes Extensions or hasn't populated the Itunes "summary" field, will return an empty string and an error
+func (i *Item) ItunesSummary() (string, error) {
+	if !i.isItunes {
+		return "", errors.New("Not an Itunes RSS Feed")
+	}
+	if i.itunes.subtitle == "" {
+		return "", errors.New("Itunes summary field not populated")
+	}
+	return i.itunes.subtitle, nil
+}
 //Returns Itunes episode duration. If this information wasn't available or the item doesn't contain Itunes Extensions then we return nil and an error.
 func (i Item) ItunesDuration() (*time.Duration, error) {
 	if !i.isItunes {
@@ -129,4 +161,15 @@ func (i Item) ItunesDuration() (*time.Duration, error) {
 		return nil, errors.New("Itunes duration field missing")
 	}
 	return &i.itunes.duration, nil
+}
+
+//Returns the Itunes "image" field for the item. If the item doesn't contain ITunes Extensions or hasn't populated the Itunes "image" field, will return nil and an error.
+func (i *Item) ItunesImage() (*Image, error) {
+	if !i.isItunes {
+		return nil, errors.New("Not an Itunes RSS Feed")
+	}
+	if i.itunes.image.url == "" {
+		return nil, errors.New("Itunes image fields not populated")
+	}
+	return &i.itunes.image, nil
 }
