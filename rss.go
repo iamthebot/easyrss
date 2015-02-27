@@ -68,6 +68,7 @@ type Item struct {
 func Decode(data []byte) (*RSS, error) {
 	rssObj := RSS{}
 	xmlrssObj := xmlRSS{} //For quick access to key nodes
+	xmlChanObj := xmlChannel{}
 	xmlDoc, err := gokogiri.ParseXml(data)
 	if err != nil {
 		fmt.Printf("%s", err.Error())
@@ -76,6 +77,11 @@ func Decode(data []byte) (*RSS, error) {
 	rootNode := xmlDoc.Root()
 	getChannel(&xmlrssObj, rootNode)
 	getChannelElem(&rssObj, xmlrssObj.channel)
+	getItems(&xmlChanObj, xmlrssObj.channel)
+    rssObj.channel.items = make([]Item,len(xmlChanObj.items))
+	for itemID := 0; itemID < len(xmlChanObj.items); itemID++ {
+		getItemMeta(&rssObj, itemID, xmlChanObj.items[itemID])
+	}
 	xmlDoc.Free()
 	return &rssObj, nil
 }
@@ -143,7 +149,7 @@ func getItems(x *xmlChannel, c xml.Node) {
 }
 
 //Sets Appropriate Item Metadata
-func getItemMeta(r *RSS, chanID int, itemID int, i xml.Node) {
+func getItemMeta(r *RSS, itemID int, i xml.Node) {
 	r.channel.items[itemID].media.credits = make(map[string]string)
 	for activeElem := i.FirstChild(); activeElem != nil; activeElem = activeElem.NextSibling() {
 		tag := activeElem.Name()
