@@ -130,7 +130,7 @@ func (r *RSS) Keywords() ([]string, error) {
 }
 
 //MediaRSS Feed categories. If the MRSS feed "categories" field is not populated or if the feed doesn't implement MediaRSS extensions, this will return nil and an error.
-func (r *RSS) Categories() ([]string, error) {
+func (r *RSS) MRSSCategories() ([]string, error) {
 	if !r.channel.isMRSS {
 		return nil, errors.New("Not a MediaRSS Feed")
 	} else if len(r.channel.media.categories) == 0 {

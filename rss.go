@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/moovweb/gokogiri"
 	"github.com/moovweb/gokogiri/xml"
+	"strconv"
 	"time"
-    "strconv"
 )
 
 type RSS struct {
@@ -30,7 +30,7 @@ type Channel struct {
 	language    string           //Channel language
 	copyright   string           //Channel Copyright
 	categories  []string         //Channel Categories
-	items       []*Item          //Slice of the items in the channel
+	items       []Item           //Slice of the items in the channel
 	itunes      ItunesMeta       //Itunes Podcast Category
 	media       MediaChannelMeta //MediaRSS Channel Metadata
 
@@ -42,14 +42,6 @@ type RSSEnclosure struct {
 	url       string
 	mediaType string
 	size      uint64
-}
-
-type Image struct {
-	title  string
-	url    string
-	link   string
-	width  int
-	height int
 }
 
 type GUIDField struct {
@@ -152,7 +144,7 @@ func getItems(x *xmlChannel, c xml.Node) {
 
 //Sets Appropriate Item Metadata
 func getItemMeta(r *RSS, chanID int, itemID int, i xml.Node) {
-    r.channel.items[itemID].media.credits = make(map[string]string)
+	r.channel.items[itemID].media.credits = make(map[string]string)
 	for activeElem := i.FirstChild(); activeElem != nil; activeElem = activeElem.NextSibling() {
 		tag := activeElem.Name()
 		if tag == "text" {
@@ -178,29 +170,24 @@ func getItemMeta(r *RSS, chanID int, itemID int, i xml.Node) {
 				}
 			case "description":
 				r.channel.items[itemID].description = tagContent
-            case "enclosure":
-                r.channel.items[itemID].hasEnclosure = true
-                if urlAttr := activeElem.Attribute("url"); urlAttr != nil {
-                    r.channel.items[itemID].enclosure.url = urlAttr.Value()
-                }
-                if mediaType := activeElem.Attribute("type"); mediaType != nil {
-                    r.channel.items[itemID].enclosure.mediaType = mediaType.Value()
-                }
-                if fileSize := activeElem.Attribute("length"); fileSize != nil {
-                    r.channel.items[itemID].enclosure.size,_ = strconv.ParseUint(fileSize.Value(),10,64)
-                }
+			case "enclosure":
+				r.channel.items[itemID].hasEnclosure = true
+				if urlAttr := activeElem.Attribute("url"); urlAttr != nil {
+					r.channel.items[itemID].enclosure.url = urlAttr.Value()
+				}
+				if mediaType := activeElem.Attribute("type"); mediaType != nil {
+					r.channel.items[itemID].enclosure.mediaType = mediaType.Value()
+				}
+				if fileSize := activeElem.Attribute("length"); fileSize != nil {
+					r.channel.items[itemID].enclosure.size, _ = strconv.ParseUint(fileSize.Value(), 10, 64)
+				}
 			}
 		}
 	}
 }
 
-//Whether or not this feed implements MediaRSS Extensions
-func (r *RSS) IsMRSS() bool {
-	return r.channel.isMRSS
-}
-
 //Returns available feed items. Will return an error if the feed is empty.
-func (r *RSS) Items() ([]*Item, error) {
+func (r *RSS) Items() ([]Item, error) {
 	if len(r.channel.items) == 0 {
 		return nil, errors.New("Feed contains no items")
 	}
@@ -273,5 +260,13 @@ func (i Item) Date() (*time.Time, error) {
 
 //Whether or not the item has a media enclosure.
 func (i Item) HasEnclosure() bool {
-    return i.hasEnclosure
+	return i.hasEnclosure
+}
+
+//Returns the item . If the item title is not populated, you'll get an empty string and an error.
+func (i Item) Description() (string, error) {
+	if i.description == "" {
+		return "", errors.New("Item description is not populated")
+	}
+	return i.description, nil
 }

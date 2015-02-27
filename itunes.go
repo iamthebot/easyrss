@@ -98,7 +98,7 @@ func (r *RSS) ItunesSummary() (string, error) {
 	return r.channel.itunes.subtitle, nil
 }
 
-//Returns the Itunes "image" field for the channel. If the channel doesn't contain ITunes Extensions or hasn't populated the channel-wide Itunes "image" field, will return nil and an error. 
+//Returns the Itunes "image" field for the channel. If the channel doesn't contain ITunes Extensions or hasn't populated the channel-wide Itunes "image" field, will return nil and an error.
 func (r *RSS) ItunesImage() (*Image, error) {
 	if !r.channel.isItunes {
 		return nil, errors.New("Not an Itunes RSS Feed")
@@ -123,10 +123,10 @@ func (r *RSS) ItunesExplicit() (string, error) {
 //Returns Itunes episode duration. If this information wasn't available or the item doesn't contain Itunes Extensions then we return nil and an error.
 func (i Item) ItunesDuration() (*time.Duration, error) {
 	if !i.isItunes {
-		return nil , errors.New("Not an Itunes RSS Feed")
+		return nil, errors.New("Not an Itunes RSS Feed")
 	}
-    if int(r.channel.itunes.duration) == 0 {
-        return nil, errors.New("Itunes duration field missing")
-    }
-    return &i.itunes.duration, nil
+	if int(i.itunes.duration) == 0 {
+		return nil, errors.New("Itunes duration field missing")
+	}
+	return &i.itunes.duration, nil
 }
