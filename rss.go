@@ -78,7 +78,7 @@ func Decode(data []byte) (*RSS, error) {
 	getChannel(&xmlrssObj, rootNode)
 	getChannelElem(&rssObj, xmlrssObj.channel)
 	getItems(&xmlChanObj, xmlrssObj.channel)
-    rssObj.channel.items = make([]Item,len(xmlChanObj.items))
+	rssObj.channel.items = make([]Item, len(xmlChanObj.items))
 	for itemID := 0; itemID < len(xmlChanObj.items); itemID++ {
 		getItemMeta(&rssObj, itemID, xmlChanObj.items[itemID])
 	}
@@ -267,6 +267,11 @@ func (i Item) Date() (*time.Time, error) {
 //Whether or not the item has a media enclosure.
 func (i Item) HasEnclosure() bool {
 	return i.hasEnclosure
+}
+
+//The media enclosure url.
+func (i Item) GetEnclosureURL() string {
+	return i.enclosure.url
 }
 
 //Returns the item . If the item title is not populated, you'll get an empty string and an error.
