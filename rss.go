@@ -171,8 +171,48 @@ func getItemMeta(r *RSS, itemID int, i xml.Node) {
 			case "link":
 				r.channel.items[itemID].link = tagContent
 			case "pubDate":
-				if parsedDate, perr := time.Parse("Mon, 02 Feb 2006 15:04:05 -0700", tagContent); perr == nil {
-					r.channel.items[itemID].date = &parsedDate
+				layouts := []string{
+					"2006-01-02 15:04:05 -0700 MST",
+					"2006-01-02 15:04:05 -0700",
+					"2006-01-02 15:04:05",
+					"2006/01/02 15:04:05 -0700 MST",
+					"2006/01/02 15:04:05 -0700",
+					"2006/01/02 15:04:05",
+					"2006-01-02 -0700 MST",
+					"2006-01-02 -0700",
+					"2006-01-02",
+					"2006/01/02 -0700 MST",
+					"2006/01/02 -0700",
+					"2006/01/02",
+					"2006-01-02 15:04:05 -0700 -0700",
+					"2006/01/02 15:04:05 -0700 -0700",
+					"2006-01-02 -0700 -0700",
+					"2006/01/02 -0700 -0700",
+					"Mon, 2 Jan 2006 15:04:05 MST",
+					time.ANSIC,
+					time.UnixDate,
+					time.RubyDate,
+					time.RFC822,
+					time.RFC822Z,
+					time.RFC850,
+					time.RFC1123,
+					time.RFC1123Z,
+					time.RFC3339,
+					time.RFC3339Nano,
+					time.Kitchen,
+					time.Stamp,
+					time.StampMilli,
+					time.StampMicro,
+					time.StampNano,
+				}
+				var parsedDate time.Time
+				var err error
+				for _, layout := range layouts {
+					parsedDate, err = time.Parse(layout, tagContent)
+					if err == nil {
+						r.channel.items[itemID].date = &parsedDate
+						break
+					}
 				}
 			case "description":
 				r.channel.items[itemID].description = tagContent
@@ -270,7 +310,7 @@ func (i Item) HasEnclosure() bool {
 }
 
 //The media enclosure url.
-func (i Item) GetEnclosureURL() string {
+func (i Item) EnclosureURL() string {
 	return i.enclosure.url
 }
 
