@@ -11,7 +11,7 @@ First, install libxml and its development headers by way of your package manager
 
 Ubuntu:
 ```bash
-sudo apt-get install libxml2-dev libxml2
+sudo apt-get install libxml2-dev libxml2 pkg-config
 ```
 
 Fedora/CentOS/RHEL:

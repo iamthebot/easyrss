@@ -35,22 +35,41 @@ func setItunesMetaField(n xml.Node, i *ItunesMeta) {
 		i.keywords = tagContent
 	case "duration":
 		splitDur := strings.Split(tagContent, ":")
-		if len(splitDur) != 3 { //Not H:M:S format
+		if len(splitDur) != 3 && len(splitDur) != 2 { //Not H:M:S/M:S format, so probably just a seconds integer
+			duration, err := time.ParseDuration(tagContent + "s")
+			if err != nil {
+				return
+			}
+			i.duration = duration
 			return
 		}
-		hours, e := strconv.ParseInt(splitDur[0], 10, 8)
-		if e != nil {
-			return
+
+		if len(splitDur) == 3 {
+			hours, e := strconv.ParseInt(splitDur[0], 10, 8)
+			if e != nil {
+				return
+			}
+			minutes, e := strconv.ParseInt(splitDur[1], 10, 8)
+			if e != nil {
+				return
+			}
+			seconds, e := strconv.ParseInt(splitDur[2], 10, 8)
+			if e != nil {
+				return
+			}
+			i.duration = time.Duration(time.Duration(hours)*time.Hour + time.Duration(minutes)*time.Minute + time.Duration(seconds)*time.Second)
+		} else {
+			minutes, e := strconv.ParseInt(splitDur[0], 10, 8)
+			if e != nil {
+				return
+			}
+			seconds, e := strconv.ParseInt(splitDur[1], 10, 8)
+			if e != nil {
+				return
+			}
+			i.duration = time.Duration(time.Duration(minutes)*time.Minute + time.Duration(seconds)*time.Second)
 		}
-		minutes, e := strconv.ParseInt(splitDur[1], 10, 8)
-		if e != nil {
-			return
-		}
-		seconds, e := strconv.ParseInt(splitDur[2], 10, 8)
-		if e != nil {
-			return
-		}
-		i.duration = time.Duration(time.Duration(hours)*time.Hour + time.Duration(minutes)*time.Minute + time.Duration(seconds)*time.Second)
+
 	case "image":
 		if urlNode := n.Attribute("href"); urlNode != nil {
 			i.image.url = urlNode.Value()
@@ -152,6 +171,7 @@ func (i *Item) ItunesSummary() (string, error) {
 	}
 	return i.itunes.subtitle, nil
 }
+
 //Returns Itunes episode duration. If this information wasn't available or the item doesn't contain Itunes Extensions then we return nil and an error.
 func (i Item) ItunesDuration() (*time.Duration, error) {
 	if !i.isItunes {
